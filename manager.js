@@ -32,7 +32,6 @@ function managerInput () {
             case "Products for sale":
                 var query = connection.query("SELECT id, productName, price, stock FROM products", (err, res) => {
                     if (err) throw err;
-                    // print out a table
                     // print out table of items
                     console.log("\nAll products for sale\n");
                     const lineString = common.underline(51, 5);
@@ -56,7 +55,6 @@ function managerInput () {
             case "View low inventory":
                 var query = connection.query("SELECT id, productName, price, stock FROM products WHERE stock<" + lowStockThreshold, (err, res) => {
                     if (err) throw err;
-                    // print out a table
                     // print out table of items
                     console.log("\nLow stock items\n");
                     const lineString = common.underline(51, 5);
@@ -76,6 +74,26 @@ function managerInput () {
                     console.log();
                     managerInput();
                 });
+                break;
+            case "Add to inventory":
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: 'id',
+                        message: "What is the id of the item you want to restock ?",
+                        validate: (val) => parseInt(val) > 0
+                    },
+                    {
+                        type: "input",
+                        name: 'stockIncrease',
+                        message: "how many do you want to add ?",
+                        validate: (val) => parseInt(val) > 0
+                    }
+                ]).then((answer) => {
+                    
+                    managerInput();
+                });
+
                 break;
             default:
                 common.cleanExit(connection, "Manager input code not completed");
