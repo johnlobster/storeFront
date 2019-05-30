@@ -15,7 +15,21 @@ CREATE TABLE products (
     PRIMARY KEY (id)
 );
 
--- create some values, by department
+CREATE TABLE departments (
+    id INT NOT NULL AUTO_INCREMENT,
+    departmentName VARCHAR(30) NOT NULL DEFAULT "",
+    overHead INT NOT NULL DEFAULT 500,
+    PRIMARY KEY (id)
+);
+
+INSERT INTO departments ( departmentName, overHead)
+VALUES
+    ("cats", 500),
+    ("widgets", 500),
+    ("gadgets", 500);
+
+
+-- create some product values, by department
 INSERT INTO products (productName, department, price, stock)
 VALUES 
     ( "small widget", "widgets", 100, 10),
