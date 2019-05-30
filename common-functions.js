@@ -2,7 +2,7 @@
 
 const mysql = require("mysql");
 
-// produce a string that will underline in a table with count number of -
+// produce a string that will underline in a table with count number of _
 function underline (count, leadingSpaces) {
     result = "";
     for (let i = 0; i < leadingSpaces; i++) {
@@ -14,11 +14,11 @@ function underline (count, leadingSpaces) {
     return result;
 }
 
-// clean exit from node, closes connection and prints out a message
 function cleanExit(connection, message) {
     if (message) {
-        console.log("\n" + message + "\n");
+        console.log(message);
     }
+    console.log("\nexiting customer app\n");
     // close DB connection
     connection.end();
     process.exit();
