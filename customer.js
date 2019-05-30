@@ -13,15 +13,6 @@ const common = require("./common-functions");
 
 // functions
 
-function cleanExit (connection, message) {
-    if (message) {
-        console.log(message);
-    }
-    console.log("\nexiting customer app\n");
-    // close DB connection
-    connection.end();
-    process.exit();
-}
 function customerInput() {
     // create a list of items for customer to select 
     var query = connection.query("SELECT id,productName,price FROM products", (err, res) => {
@@ -57,7 +48,7 @@ function customerInput() {
         ]).then( (answers) => {
             // check for quit
             if (answers.itemId.toLowerCase() === "q") {
-                cleanExit(connection);
+                common.cleanExit(connection);
             } 
             // callback with user responses
             let itemName = res[answers.itemId -1].productName;
