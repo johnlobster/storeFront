@@ -45,10 +45,10 @@ function managerInput () {
                             res[i].productName,
                             parseFloat(res[i].price).toFixed(2),
                             parseInt(res[i].stock)
-                            ));
+                        ));
                     }
                     console.log(lineString);
-                    console.log();
+                    console.log();  
                     managerInput();
                 });
                 break;
@@ -89,11 +89,64 @@ function managerInput () {
                         message: "how many do you want to add ?",
                         validate: (val) => parseInt(val) > 0
                     }
-                ]).then((answer) => {
-                    
-                    managerInput();
+                ]).then((answers) => {
+                    var query = connection.query("SELECT stock,productName FROM products WHERE id=" + answers.id +
+                    " LIMIT 1", (err, res) => {
+                        if (err) throw err;
+                        const newStock = res[0].stock + parseInt(answers.stockIncrease);
+                        const description = res[0].productName;
+                        var query = connection.query("UPDATE products SET stock=" + newStock + 
+                        " WHERE id=" + answers.id, (err, res) => {
+                            if (err) throw err;
+                            console.log("\nIncreased stock in product \"" +  description + "\" (id " + answers.id + ") to " + newStock + "\n");
+                            managerInput();
+                        });
+                    });
                 });
 
+                break;
+
+            case "Add new product":
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: 'name',
+                        message: "What is the name of the product you want to stock ?",
+                        validate: (val) => val !== ""
+                    },
+                    {
+                        type: "input",
+                        name: 'department',
+                        message: "what department will this be ?",
+                        validate: (val) => val !== ""
+                    },
+                    {
+                        type: "input",
+                        name: 'price',
+                        message: "Item price ",
+                        validate: (val) => val > 0
+                    },
+                    {
+                        type: "input",
+                        name: 'quantity',
+                        message: "Quantity ",
+                        validate: (val) => val > 0
+                    }
+
+                ]).then((answers) => {
+                    // need to add some input validation, department names, duplicate item
+                    var query = connection.query("INSERT INTO products (productName, department, price, stock) VALUES (\"" +
+                        answers.name + "\", \"" +
+                        answers.department + "\", \"" +
+                        answers.price + "\", \"" +
+                        answers.quantity +"\")"
+                    , (err, res) => {
+                        if (err) throw err;
+                        console.log("\nAdded item " + answers.name + " in deaprtment " + answers.department +
+                            ", price " + answers.price + ", quantity " + answers.quantity + "\n");
+                        managerInput();
+                    });
+                });
                 break;
             default:
                 common.cleanExit(connection, "Manager input code not completed");
