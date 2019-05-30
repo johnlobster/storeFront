@@ -38,50 +38,54 @@ function customerInput() {
                 name: 'itemId',
                 message: "What is the id of the item you want (1-" + res.length + ") (q to exit) ?",
                 validate: (val) => ((parseInt(val) > 0) && (parseInt(val) <= res.length)) || (val.toLowerCase() === "q") 
-            },
-            {
-                type: "input",
-                name:"quantity",
-                message: "How many do you want ?",
-                validate: (val) => parseInt(val) > 0
-            }
+            }  
         ]).then( (answers) => {
             // check for quit
             if (answers.itemId.toLowerCase() === "q") {
-                common.cleanExit(connection);
+                common.cleanExit(connection, "Exiting customer app");
             } 
-            // callback with user responses
-            let itemName = res[answers.itemId -1].productName;
-            // check stock
-            var query = connection.query("SELECT stock FROM products WHERE id=" + answers.itemId + " LIMIT 1", (err, res) => {
-                if (err) throw err;
-                if ( parseInt(res[0].stock) > parseInt(answers.quantity)){
-                    // console.log(parseInt(res[0].stock) + " " + parseInt(answers.quantity));
-                    let newStock = parseInt(res[0].stock) - parseInt(answers.quantity);
-
-                    // update stock information
-                    var query = connection.query("UPDATE products SET stock=" + newStock +
-                     " WHERE id=" + answers.itemId, 
-                        (err, res) => {
-                            if (err) throw err;
-                            console.log("Purchase was succesful");
-                            customerInput();
-                            // cleanExit(connection,"early exit");
-
-                        });
-
+            let itemName = res[answers.itemId - 1].productName;
+            let itemId = answers.itemId;
+            // didn't quit so find out how many the customer wants
+            inquirer.prompt([
+                {
+                    type: "input",
+                    name: "quantity",
+                    message: "How many do you want ?",
+                    validate: (val) => parseInt(val) > 0
                 }
-                else {
-                    console.log();
-                    console.log(chalk.red("Not enough of item " + answers.itemId + " (" + itemName +") in stock"));
-                    console.log(chalk.red("Alter quantity or try another item\n"));
-                    customerInput();
-                }
+            ]).then ( (answers) => {
+                // callback with user responses
+                // check stock
+                var query = connection.query("SELECT stock, salesValue, price FROM products WHERE id=" + itemId + " LIMIT 1", (err, res) => {
+                    if (err) throw err;
+                    if ( parseInt(res[0].stock) > parseInt(answers.quantity)){
+                        let newStock = parseInt(res[0].stock) - parseInt(answers.quantity);
+                        let newSalesValue = parseFloat(res[0].salesValue) + (parseInt(answers.quantity)* parseFloat(res[0].price));
+                        // update stock information and add to salesValue
+                        var query = connection.query("UPDATE products SET stock=" + newStock + 
+                        ", salesValue=" + newSalesValue +
+                        " WHERE id=" + itemId, 
+                            (err, res) => {
+                                if (err) throw err;
+                                console.log("\nPurchase was succesful");
+                                console.log("You bought " + answers.quantity + " " + itemName);
+                                customerInput();
+                            });
+                            
+
+                    }
+                    else {
+                        console.log();
+                        console.log(chalk.red("Not enough of item " + answers.itemId + " (" + itemName +") in stock"));
+                        console.log(chalk.red("Alter quantity or try another item\n"));
+                        customerInput();
+                    }
+                // note callback "Christmas tree"
+                });
             });
-
         });
     });
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
