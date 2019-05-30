@@ -1,20 +1,19 @@
 // common functions and objects for storefront
 
-require("dotenv").config();
-const mysql = require("mysql");
+// produce a string that will underline in a table with count number of _
+function underline (count, leadingSpaces) {
+    result = "";
+    for (let i = 0; i < leadingSpaces; i++) {
+        result += " ";
+    }
+    for (let i=0 ; i < count; i++) {
+        result += "-";
+    }
+    return result;
+}
 
-var connection = mysql.createConnection({
-    host: "localhost",
 
-    // Your port; if not 3306
-    port: 3306,
 
-    // Your username
-    user: "root",
+// console.log(connection);
 
-    // Your password
-    password: String(process.env.MYSQL_PASSWORD),
-    database: "bamazon_DB"
-});
-
-module.exports.connection = {connection};
+module.exports.underline = underline;
