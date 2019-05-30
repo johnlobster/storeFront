@@ -11,7 +11,7 @@ CREATE TABLE products (
     department VARCHAR(30) NOT NULL DEFAULT "",
     price FLOAT NOT NULL DEFAULT 0,
     stock INT NOT NULL DEFAULT 0,
-    salesValue INT NOT NULL DEFAULT 0,
+    salesValue FLOAT NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
 
