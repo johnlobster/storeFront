@@ -39,3 +39,7 @@ Results can be found in the results sub-directory.
 `results/README.txt` has details
 
 #### Design notes
+
+ * For complex SQL queries, I run the query using msql workbench to get it working properly before creating a query string in javascript. The file `queries.sql` is checked in and shows the complex query needed for the supervisor app
+
+ * I created a module of common javascript functions to be shared between the different apps. In the end only two functions were common.
