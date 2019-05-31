@@ -51,7 +51,14 @@ VALUES
     ("furry cat", "cats", 300, 10),
     ("shy cat", "cats", 100, 2);
 
-    
+UPDATE products SET salesValue=100;
+
+SELECT departments.*,
+	SUM(products.salesValue ) AS sales,
+    (SUM(products.salesValue)-overHead) AS profit
+FROM departments,products 
+WHERE products.department=departments.departmentName
+GROUP BY products.department;
 
 
 
