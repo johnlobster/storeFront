@@ -1,6 +1,7 @@
 // common functions and objects for storefront
 
 const mysql = require("mysql");
+const chalk = require("chalk");
 
 // produce a string that will underline in a table with count number of -
 function underline (count, leadingSpaces) {
@@ -23,7 +24,6 @@ function cleanExit(connection, message) {
     connection.end();
     process.exit();
 }
-
 
 
 // console.log(connection);

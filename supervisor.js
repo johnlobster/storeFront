@@ -29,18 +29,65 @@ function supervisorInput () {
                 common.cleanExit(connection, "\nExiting supervisor app\n");
                 break;
             case "View product sales by department":
-
+                const depQuery = "SELECT departments.id, departments.departmentName, departments.overHead," +
+                    " SUM(products.salesValue) AS productSales," +
+                    " SUM(products.salesValue) - departments.overHead AS totalProfit" +
+                    " FROM departments" + 
+                    " INNER JOIN products" +
+                    " ON products.department = departments.departmentName GROUP BY departmentName";
+                var query = connection.query(depQuery, (err, res) => {
+                    if (err) throw err;
+                    // print out table from query
+                    console.log("\nProduct sales by department\n");
+                    const lineString = common.underline(77, 5);
+                    const printString = "     | %4s | %-20s | %9s | %14s | %14s |";
+                    console.log(lineString);
+                    console.log(sprintf(printString, "id", "Department name", "Overhead", "Product sales", "Total profit"));
+                    console.log(lineString);
+                    for (let i = 0; i < res.length; i++) {
+                        console.log(sprintf(printString,
+                            parseInt(res[i].id),
+                            res[i].departmentName,
+                            parseFloat(res[i].overHead).toFixed(2),
+                            parseFloat(res[i].productSales).toFixed(2),
+                            parseFloat(res[i].totalProfit).toFixed(2)
+                        ));
+                    }
+                    console.log(lineString);
+                    console.log();  
+                    supervisorInput();
+                });
                 break;
             case "Create new department":
-
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: 'newDepartment',
+                        message: "Input new department name",
+                        validate: (val) => val !== ""
+                    },
+                    {
+                        type: "input",
+                        name: 'overhead',
+                        message: "Input new department overhead",
+                        validate: (val) => (val > 0) && (val !== "")
+                    }
+                ]).then((answers) => {
+                    const newDepQuery = "INSERT INTO departments ( departmentName, overHead)" +
+                        " VALUES (\"" + answers.newDepartment + "\", " + answers.overhead + " )";
+                    console.log(newDepQuery);
+                    var query = connection.query(newDepQuery, (err, res) => {
+                        if (err) throw err;
+                        console.log("\nsuccessfully added department " + answers.newDepartment );
+                        console.log("Note - will not appear in sales report because there are no products or sales yet\n");
+                        supervisorInput();
+                    });
+                });
                 break;
         }
     });
 }
 
-// View Product Sales by Department
-
-//     * Create New Department
 
 // connect to the database
 var connection = mysql.createConnection({
@@ -60,6 +107,6 @@ var connection = mysql.createConnection({
 connection.connect((err) => {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
-    console.log("Manager app started\n");
+    console.log("Supervisor app started\n");
     supervisorInput();
 });
