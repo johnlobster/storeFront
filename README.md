@@ -46,5 +46,5 @@ Results can be found in the results sub-directory.
 
  * Once customer was working, I refactored it to use promises instead of callback chain
 
- * a couple of times git stopped working and wouldn't commit or checkout. Had to re-clone thje database, copy the changed files in and then stage and commit. Debugging this and fixing was very time consuming
+ * a couple of times git stopped working and wouldn't commit or checkout. Had to re-clone the database, copy the changed files in and then stage and commit. Debugging this and fixing was very time consuming
 
